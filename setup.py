@@ -7,11 +7,8 @@ requirements = [x.strip() for x in content if 'git+' not in x]
 
 setup(name='crypto-sentiment-streamlit',
       version="1.0",
-      description="Project Description",
+      description="Crypto sentiment streamlit app",
       packages=find_packages(),
-      install_requires=requirements,
-      test_suite='tests',
-      # include_package_data: to install data from MANIFEST.in
-      include_package_data=True,
-      scripts=['scripts/crypto-sentiment-streamlit-run'],
-      zip_safe=False)
+      packages=find_packages(),
+      include_package_data=True,  # includes in package files from MANIFEST.in
+      install_requires=requirements)
