@@ -1,10 +1,6 @@
-# Data analysis
-- Document here the project: crypto-sentiment-streamlit
-- Description: Project Description
-- Data Source:
-- Type of analysis:
-
-Please document the project the better you can.
+# Repository info
+- Project: Crypto-Sentiment streamlit app respository
+- Description: This repository holds light-weight package holding all scripts and files required for heroku/streamlit deployment
 
 # Startup the project
 
