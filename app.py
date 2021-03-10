@@ -4,10 +4,11 @@ import datetime
 import pandas as pd
 import numpy as np
 from PIL import Image
+import requests
 
 # page conf
 st.set_page_config(
-    page_title="Kryptonite",
+    page_title="Cryptonite",
     page_icon=":gem:",
     layout="centered", # wide
     initial_sidebar_state="expanded") # collapsed
@@ -61,7 +62,7 @@ st.write(background_image_style(image_path), unsafe_allow_html=True)
 # Logo and Title 
 
 '''
-# Kryptonite... 
+# Cryptonite... 
 '''
 
 col1, col2, col3 = st.beta_columns(3)
@@ -96,8 +97,6 @@ Below you will find contrasting results for predictions with and without the use
 #         start_datetime=[f"{start_datetime} UTC"],
 #         end_datetime=[f"{end_datetime} UTC"],
 #         wallet=[float(wallet)])
-
-
 
 
 ## EXAMPLE API REQUEST, TO BE DELETED ONCE OURS IS UP AND RUNNING
@@ -188,14 +187,38 @@ st.latex(r'''
 > * h(t): effects of holidays (user provided) with irregular schedules
 > * εt: error term accounts for any unusual changes not accommodated by the model
 '''
-
+'''
+Our model does not pick up the latest spike (Nov/20 to Feb/21), pointing towards the probable hypothesis 
+Obviously no model will ever beat having predicted the bigges (outlier) value spike in the history of the crypto market!
+'''
 
 '''
 # 
-# Version 1 of our live predictor indicator:
+# Live predictor indicator v1.0:
 #
+Our API is based on both the 12:00AM UTC BTC closing value and the Fear&Greed index value that is updated at the same time.
+For this reason our API will be updated every day at 12:05AM
 
-### Tomorrow's prediction is:
+## Tomorrow's prediction is:
 '''
+
+# Need to change url once it is changed to docker
+@st.cache
+def response():
+    url = 'http://127.0.0.1:8000'
+    return requests.get(url)
+
+prediction = response().json()
+
+st.write('Predicted BTC Price:', round(prediction['prediction'],2), '$')
+st.write('Closing BTC Price:', round(prediction['current_btc_price'],2), '$')
+st.write('Predicted change:', round(100-((prediction['current_btc_price']/prediction['prediction'])*100),2), '%')
+st.write('## Buy/Sell Recommendation:', prediction['Recommendation'], '!')
+if prediction['Recommendation'] == 'Sell':
+    st.error('You should sell today, the sooner the better!')
+if prediction['Recommendation'] == 'Buy':
+    st.success('You should buy bitcoin ASAP!')
+
 # Timer until next update
+
 # Graph showing evolution of F&G progress (we have the df so better to plot it ourselves)
