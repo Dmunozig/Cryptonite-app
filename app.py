@@ -202,18 +202,17 @@ if pages == 'Main':
     y = y.set_index('index')
 
     z = pd.merge(x,y,left_index=True,right_index=True)
+    z.columns = ['Only Previous Prices', 'One Sentiment Score']
     # fig, ax = plt.subplots(1,1,figsize=(10,8))
     # plt.figure(figsize=(10,8))
     st.line_chart(z)
 
+    # Potential 
     # alt.Chart(z).mark_line().encode(
     # x='date',
     # y='price',
     # color='symbol',
     # strokeDash='symbol',)
-    # st.area_chart(wallet(budget, one_score, start=str(d_start), end=str(d_end))[2],wallet(budget, one_score, start=str(d_start), end=str(d_end))[1])
-    # st.area_chart(wallet(budget, all_score, start=str(d_start), end=str(d_end))[2],wallet(budget, all_score, start=str(d_start), end=str(d_end))[1])
-    # plt.show()
 
     '''
     ### Your wallet gains are...
