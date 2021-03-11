@@ -1,7 +1,5 @@
 streamlit
 setuptools
-datetime
-time
 pandas
 numpy
 PIL
