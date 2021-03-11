@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 import requests
 import base64
+import matplotlib.pyplot as plt
 
 # page conf
 st.set_page_config(
@@ -129,10 +130,20 @@ if pages == 'Main':
     '''
     ### These wallets will allow **you** to explore the effects of the analyzed sentiment indexes on your *potential* investments over time... If they were done in the past.
     ###
-    The results will show 3 example wallet performances plus simple market performance. The first wallet (no signal) only accounts for previous price fluctuations, which our time-series Prophet model took into account for the prediction.
-    The second wallet (one signal) accounts for the Fear&Greed index as an exogenous varible. The third (four signals), and best performing wallet, also takes into account Augmento data for which we collected social media sentiment scores from twitter, reddit, and bitcoin talk messages. 
-    By taking into account Fear&Greed and Augmento data as exogenous variables our final wallet becomes the best performing one.
-
+    '''
+    # creating expander object
+    expander_creators = st.beta_expander("Wallet information breakdown (click for more)", expanded=False)
+    with expander_creators:
+        # content within the expander
+        # a1, a2 = st.beta_columns((1,1))
+        # a1.image('https://res.cloudinary.com/dbxctsqiw/image/upload/v1615466629/SmArt/Jae_s0lcs8.png')
+        # a2.image('https://res.cloudinary.com/dbxctsqiw/image/upload/v1615466627/SmArt/ed_ljtaqb.png')
+        '''
+        The results below show 3 example wallet performances *plus* simple market performance. The first wallet (**no signal**) only accounts for previous price fluctuations, which our time-series Prophet model took into account for the prediction.
+        The second wallet (**one signal**) accounts for the Fear&Greed index as an exogenous varible. The third (**four signals**), and best performing wallet, also takes into account Augmento data for which we collected social media sentiment scores from twitter, reddit, and bitcoin talk messages. 
+        By taking into account Fear&Greed and Augmento data as **exogenous variables** our final wallet becomes **the best performing** one.
+        '''
+    '''
     ###
     Please choose a **time frame** and wallet **budget** (USD $):
     '''
@@ -221,7 +232,7 @@ if pages == 'Live Prediction':
     # 
     # Live predictor indicator v2.0:
     #
-    This prediction is based on our wallet 2.0 that you saw in the Main page. We cannot provide an API for our best performing wallet (3.0) due to privacy restrictions from the Augmento team.
+    This prediction is based on our **one signal** wallet that you saw in the Main page. We cannot provide an API for our best performing wallet (3.0) due to privacy restrictions from the Augmento team.
 
     Our API is based on both the **BTC closing value** and the **Fear&Greed index** value, which are both updated at the **12:00AM UTC**.
     For this reason our API will be updated every day at 12:05AM.
@@ -264,17 +275,43 @@ if pages == 'EDA & Metrics':
     '''
     # 
     # Exploratory Data Analysis and Metrics
-    #
-    ## Fear & Greed:
+    ##
+    This section is intended to give *insight* into our aquisition of data, our feature engineering methodologies, and the optimum performance of our model. We hope this helps users and their conviction to trust our model predictions.
+    ## Sentiment indexes:
+    ### Augmento Social Media Scores
+    Augmento is an API that constantly collects cryptocurrency related conversations from Twitter, Reddit & Bitcointalk. Using a **classifier trained on crypto specific language**, the data is analyzed according to **93 sentiments and topics**. 
+    From there we selected specific topics that we believe can be translated as *“price driving topics”* or *“price lowering topic”* for bitcoins. This method allowed to create years of stable data suitable for backtesting.
+    
+    Below you will find our methodolgy for **filtering Augmento's social media messages**:
+    '''
+    # Social Media Postive/Negative filtering and category count
+    augmento_count_image = Image.open('images/augmento-count-categories.png')
+    st.image(augmento_count_image,caption='Augmento Categories Count', use_column_width=True)
+    # sm_category_count = {'Total':93, 'Neutral': 59, 'Negative': 20, 'Positive': 14}
+    # keys = sm_category_count.keys()
+    # values = sm_category_count.values()
+    # fig, ax = plt.subplots()
+    # ax.bar(keys, values, color=['darkslateblue', 'teal', 'turquoise', 'skyblue'])
+    # plt.ylabel('Count')
+    # st.pyplot(fig)
 
-    ## Augmento:
+    '''
+    Below is the final **score progression over time** of each social media platform after our **filtering for positive and negative posts**. As you can see each platform shows a different general tendency towards Bitcoin, but **never static**.
+    '''
+    # Distribution of augmento social media scores AFTER filtering
+    augmento_image = Image.open('images/augmento-final-scores-graph.png')
+    st.image(augmento_image,caption='Augmento Social Media Scores after filtering', use_column_width=True)
 
-    **TO-DO**: explain how we determined what messages from Augmento to take into account and how we defined them (positive, negative, neutral). Should also show distribution of scores per source (data exploration clean has this graph already from yassine)
-    ** Add countplot showing distribution of tweets/redditposts etc per category (positive/neg only) PLUS show a bar chart showing 93 categories and then how we divided it into positive/neg/neutral
-    - Add seasonality graphs (one proving no anual and the one proving weekly) for prophet
-    **Metrics**: MAE and accuracy
-    **Correlations!** to f&g and 
+    '''
+    ### Index Corrolation
+    Below you will find a heatmap showing **corrolations** between our exogenous variables (the Fear&Greed index and the three social media scores from Augmento) and the value of Bitcoin.
+    '''
+    # Heatmap for corrolations
+    heatmap_image = Image.open('images/heatmap2.png')
+    st.image(heatmap_image,caption='Heatmap BTC prices and indexes', use_column_width=True)
 
+    '''
+    ## Prophet model:
     Prophet uses a decomposable time series model with three main model components: trend, seasonality, and holidays. They are combined in the following equation:
     '''
     # For mathematical functions use latex
@@ -282,16 +319,44 @@ if pages == 'EDA & Metrics':
         y(t)= g(t) + s(t) + h(t) + εt
         ''')
     '''
-    > * g(t): piecewise linear or logistic growth curve for modeling non-periodic changes in time series
-    > * s(t): periodic changes (e.g. weekly/yearly seasonality)
-    > * h(t): effects of holidays (user provided) with irregular schedules
-    > * εt: error term accounts for any unusual changes not accommodated by the model
+    > * **g(t)**: piecewise linear or logistic growth curve for modeling non-periodic changes in time series
+    > * **s(t)**: periodic changes (e.g. weekly/yearly seasonality)
+    > * **h(t)**: effects of holidays (user provided) with irregular schedules
+    > * **εt**: error term accounts for any unusual changes not accommodated by the model
+    
+    ### Seasonality:
+    Thanks to prophet built-in methods we were able to extract a better performance from our model. Part of prophet's strenghts is its capacity to capture seasonality, so by using:''' 
+    st.code('model.plot_components(forecast)')
     '''
+    we were able to extract that the BTC value data had an inherent **weekly seasonality**:
     '''
-    Our model does not pick up the latest spike (Nov/20 to Feb/21), pointing towards the probable hypothesis 
-    Obviously no model will ever beat having predicted the bigges (outlier) value spike in the history of the crypto market!
+    seasonality_image = Image.open('images/weekly-seasonality.png')
+    st.image(seasonality_image,caption='Weekly Value Forecast', use_column_width=True)
+    '''
+    This shows that buyers should actually be targetting Thursday's as the best day to buy!
+
+    ### Accuracy and Mean Absolute Error (MAE):
+    '''
+    # Load csv with predictions
+    no_score = pd.read_csv('data/predictions_no_score.csv')
+    one_score = pd.read_csv('data/predictions_fear_greed_score.csv')
+    all_score = pd.read_csv('data/predictions_all_scores_best.csv')
+
+    def metrics(pred_df):
+        accuracy = pred_df['correct_pred'].sum()/len(pred_df['correct_pred'])
+        MAE = pred_df['mae'].mean()
+        return accuracy, MAE
+    
+    st.write('No Signal Accuracy:', round(metrics(no_score)[0],3))
+    st.write('No Signal MAE:', round(metrics(no_score)[1],3))
+    st.write('One Signal Accuracy:', round(metrics(one_score)[0],3))
+    st.write('One Signal MAE:', round(metrics(one_score)[1],3))
+    st.write('Four Signal Accuracy:', round(metrics(all_score)[0],3))
+    st.write('Four Signal MAE:', round(metrics(all_score)[1],3))
+
     '''
 
+    '''
     '''
     # 
     # Future Steps
