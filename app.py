@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import requests
-import altair as alt
 
 # page conf
 st.set_page_config(
@@ -189,21 +188,16 @@ if pages == 'Main':
             x['index'] = pd.to_datetime(x['index'])
             x = x.set_index('index')
         else:
-            x = pd.DataFrame(wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[3],wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[2])
+            x = pd.DataFrame(list(wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[3]),wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[2])
             x = x.reset_index()
             x['index'] = pd.to_datetime(x['index'])
             x = x.set_index('index')
         return x
-    
-    x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
-    st.write(x)
-    st.write(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3])
-    # st.write(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3])
-
+ 
     graph_df = pd.merge(prediction_plot_df(no_score),prediction_plot_df(one_score),left_index=True,right_index=True)
     graph_df = pd.merge(graph_df,prediction_plot_df(all_score),left_index=True,right_index=True)
-    #graph_df = pd.merge(graph_df,prediction_plot_df(all_score, market=True),left_index=True,right_index=True)
-    graph_df.columns = ['No Signal', 'One Signal', 'Four Signals']
+    graph_df = pd.merge(graph_df,prediction_plot_df(all_score, market=True),left_index=True,right_index=True)
+    graph_df.columns = ['No Signal', 'One Signal', 'Four Signals','Market']
     st.line_chart(graph_df)
 
     # Potential new graph style
