@@ -122,10 +122,6 @@ if pages == 'Main':
     '''
     # 
     # Interactive investment wallets
-    **Potential wallet names:**
-    - no score / one score / all scores
-    - wallet 1.0 / wallet 2.0 / wallet 3.0
-    - baseline / 1 index / 2 indexes
     '''
     # Load csv with predictions
     no_score = pd.read_csv('data/predictions_no_score.csv')
@@ -135,12 +131,13 @@ if pages == 'Main':
     '''
     ### These wallets will allow **you** to explore the effects of the analyzed sentiment indexes on your *potential* investments over time... If they were done in the past.
     ###
-    Please choose a time frame and wallet budget (USD $):
+    The results will show 3 example wallet performances plus simple market performance. The first wallet (no signal) only accounts for previous price fluctuations, which our time-series Prophet model took into account for the prediction.
+    The second wallet (one signal) accounts for the Fear&Greed index as an exogenous varible. The third (four signals), and best performing wallet, also takes into account Augmento data for which we collected social media sentiment scores from twitter, reddit, and bitcoin talk messages. 
+    By taking into account Fear&Greed and Augmento data as exogenous variables our final wallet becomes the best performing one.
+
+    ###
+    Please choose a **time frame** and wallet **budget** (USD $):
     '''
-    # user inputs
-    budget = st.number_input('Insert initial investment (USD $)', value = 100, min_value = 100, max_value = 10_000_000)
-    d_start = st.date_input('Start of investment', datetime.datetime(2019, 6, 19), min_value=datetime.datetime(2019, 6, 19), max_value=datetime.datetime(2021, 1, 31))
-    d_end = st.date_input('End of investment', datetime.datetime(2021, 1, 31), min_value=datetime.datetime(2019, 6, 19), max_value=datetime.datetime(2021, 1, 31))
 
     # Function for wallet/portfolio investing
     def wallet(budget, df, start='2019-06-19', end='2021-01-31'):
@@ -149,7 +146,7 @@ if pages == 'Main':
         new_df = df[start:end]
         cash = budget
         btc_value = 0
-        market_portfolio = (budget/new_df['y'][start])*new_df['y'][end-1]
+        market_portfolio = (budget/new_df['y'][start])*new_df['y'][:end]
         portfolio_value = []
         transaction_dates = []
         for index, row in new_df.iterrows():
@@ -179,50 +176,51 @@ if pages == 'Main':
         else:
             return (portfolio_value[-1], portfolio_value, transaction_dates, market_portfolio)
 
-    # Run wallet function using user inputs
-    st.write(round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[0],2))
+    # user inputs
+    budget = st.number_input('Insert initial investment (USD $)', value = 100, min_value = 100, max_value = 10_000_000)
+    d_start = st.date_input('Start of investment', datetime.datetime(2019, 6, 20), min_value=datetime.datetime(2019, 6, 20), max_value=datetime.datetime(2021, 1, 31))
+    d_end = st.date_input('End of investment', datetime.datetime(2021, 1, 31), min_value=datetime.datetime(2019, 6, 20), max_value=datetime.datetime(2021, 1, 31))
 
-    # make function out of datetime/indexing
-    # def line_plotting(budget, ):
-    #     x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[1],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
-
-    x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[1],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
-    # reset to index, set to to datetime, then set to index
-    x = x.reset_index()
-    x['index'] = pd.to_datetime(x['index'])
-    x = x.set_index('index')
-    # st.write(x.index.dtype)
-    # st.write(x)
-
+    # Run wallet function using user inputs for plotting
+    def prediction_plot_df(prediction_df, market=False):
+        if market == False:
+            x = pd.DataFrame(wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[1],wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[2])
+            x = x.reset_index()
+            x['index'] = pd.to_datetime(x['index'])
+            x = x.set_index('index')
+        if market == True:
+            x = pd.DataFrame(wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[3],wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[2])
+            x = x.reset_index()
+            x['index'] = pd.to_datetime(x['index'])
+            x = x.set_index('index')
+        return x
     
-    y = pd.DataFrame(wallet(budget, one_score, start=str(d_start), end=str(d_end))[1],wallet(budget, one_score, start=str(d_start), end=str(d_end))[2])
-    # reset to index, set to to datetime, then set to index
-    y = y.reset_index()
-    y['index'] = pd.to_datetime(y['index'])
-    y = y.set_index('index')
+    # x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
+    # st.write(x)
+    # st.write(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3])
 
-    z = pd.merge(x,y,left_index=True,right_index=True)
-    z.columns = ['Only Previous Prices', 'One Sentiment Score']
-    # fig, ax = plt.subplots(1,1,figsize=(10,8))
-    # plt.figure(figsize=(10,8))
-    st.line_chart(z)
+    graph_df = pd.merge(prediction_plot_df(no_score),prediction_plot_df(one_score),left_index=True,right_index=True)
+    graph_df = pd.merge(graph_df,prediction_plot_df(all_score),left_index=True,right_index=True)
+    #graph_df = pd.merge(graph_df,prediction_plot_df(all_score, market=True),left_index=True,right_index=True)
+    graph_df.columns = ['No Signal', 'One Signal', 'Four Signals']
+    st.line_chart(graph_df)
 
-    # Potential 
+    # Potential new graph style
     # alt.Chart(z).mark_line().encode(
     # x='date',
     # y='price',
     # color='symbol',
-    # strokeDash='symbol',)
+    # strokeDash='symbol')
 
     '''
     ### Your wallet gains are...
     '''
     # Run wallet function using user inputs
     # st.write(round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[0],2))
-    st.write('...based **only on previous prices**:', round(wallet(budget, no_score, start=str(d_start), end=str(d_end))[0],2), '$')
-    st.write('...based on previous price and **one sentiment score**:', round(wallet(budget, one_score, start=str(d_start), end=str(d_end))[0],2), '$')
-    st.write('...based on previous price and **four sentiment scores**:', round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[0],2), '$')
-    st.write('...if you had simply bought at start-date and sold at end-date (**market performance**):', round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[3],2), '$')
+    st.write('...based **only on previous prices** (no signal):', round(wallet(budget, no_score, start=str(d_start), end=str(d_end))[0],2), '$')
+    st.write('...based on previous price and **one sentiment score** (one signal):', round(wallet(budget, one_score, start=str(d_start), end=str(d_end))[0],2), '$')
+    st.write('...based on previous price and **four sentiment scores** (four signals):', round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[0],2), '$')
+    st.write('...if you had simply bought at start-date and sold at end-date (**market performance**):', round(wallet(budget, all_score, start=str(d_start), end=str(d_end))[3][len(wallet(budget, all_score, start=str(d_start), end=str(d_end))[3])],2), '$')
 
 if pages == 'Live Prediction':
     '''
@@ -231,7 +229,7 @@ if pages == 'Live Prediction':
     #
     This prediction is based on our wallet 2.0 that you saw in the Main page. We cannot provide an API for our best performing wallet (3.0) due to privacy restrictions from the Augmento team.
 
-    Our API is based on both the 12:00AM UTC **BTC closing value** and the **Fear&Greed index** value that is updated at the same time.
+    Our API is based on both the **BTC closing value** and the **Fear&Greed index** value, which are both updated at the **12:00AM UTC**.
     For this reason our API will be updated every day at 12:05AM.
 
     This means **optimal use of the API** requires following recommendations at time of release.
@@ -273,9 +271,10 @@ if pages == 'EDA & Metrics':
     # 
     # Exploratory Data Analysis and Metrics
     #
-    **TO-DO**: explain how we determined what messages from Augmenta to take into account and how we defined them (positive, negative, neutral). Should also show distribution of scores per source (data exploration clean has this graph already from yassine)
-    
+    **TO-DO**: explain how we determined what messages from Augmento to take into account and how we defined them (positive, negative, neutral). Should also show distribution of scores per source (data exploration clean has this graph already from yassine)
+    ** Add countplot showing distribution of tweets/redditposts etc per category (positive/neg only) PLUS show a bar chart showing 93 categories and then how we divided it into positive/neg/neutral
     **Metrics**: MAE and accuracy
+    **Correlations!** to f&g and 
 
     Prophet uses a decomposable time series model with three main model components: trend, seasonality, and holidays. They are combined in the following equation:
     '''
@@ -292,4 +291,12 @@ if pages == 'EDA & Metrics':
     '''
     Our model does not pick up the latest spike (Nov/20 to Feb/21), pointing towards the probable hypothesis 
     Obviously no model will ever beat having predicted the bigges (outlier) value spike in the history of the crypto market!
+    '''
+
+    '''
+    # 
+    # Future Steps
+    ### - Getting augmento live api
+    ### - Trying out predictions with other cryptocurrencies 
+    ### - Converting the model into hourly predictions for better accuracy
     '''
