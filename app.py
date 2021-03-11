@@ -75,7 +75,7 @@ st.sidebar.markdown(f"""
     ### 
     Thank you to the Le Wagon staff for providing us with the skill and help to develop this app.
     
-    SO to Clementine Contat for guidance through the project!
+    Special shout-out to Clementine Contat for guidance through the project!
     """)
 
 
@@ -188,15 +188,16 @@ if pages == 'Main':
             x = x.reset_index()
             x['index'] = pd.to_datetime(x['index'])
             x = x.set_index('index')
-        if market == True:
+        else:
             x = pd.DataFrame(wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[3],wallet(budget, prediction_df, start=str(d_start), end=str(d_end))[2])
             x = x.reset_index()
             x['index'] = pd.to_datetime(x['index'])
             x = x.set_index('index')
         return x
     
-    # x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
-    # st.write(x)
+    x = pd.DataFrame(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3],wallet(budget, no_score, start=str(d_start), end=str(d_end))[2])
+    st.write(x)
+    st.write(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3])
     # st.write(wallet(budget, no_score, start=str(d_start), end=str(d_end))[3])
 
     graph_df = pd.merge(prediction_plot_df(no_score),prediction_plot_df(one_score),left_index=True,right_index=True)
@@ -271,8 +272,13 @@ if pages == 'EDA & Metrics':
     # 
     # Exploratory Data Analysis and Metrics
     #
+    ## Fear & Greed:
+
+    ## Augmento:
+
     **TO-DO**: explain how we determined what messages from Augmento to take into account and how we defined them (positive, negative, neutral). Should also show distribution of scores per source (data exploration clean has this graph already from yassine)
     ** Add countplot showing distribution of tweets/redditposts etc per category (positive/neg only) PLUS show a bar chart showing 93 categories and then how we divided it into positive/neg/neutral
+    - Add seasonality graphs (one proving no anual and the one proving weekly) for prophet
     **Metrics**: MAE and accuracy
     **Correlations!** to f&g and 
 
