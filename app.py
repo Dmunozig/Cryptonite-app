@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 import requests
+import base64
 
 # page conf
 st.set_page_config(
@@ -25,8 +26,6 @@ body {
 st.write(f'<style>{CSS}</style>', unsafe_allow_html=True)
 
 # Background image
-
-import base64
 
 @st.cache
 def load_image(path):
