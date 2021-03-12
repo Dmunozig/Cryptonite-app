@@ -295,8 +295,8 @@ if pages == 'EDA & Metrics':
     st.image(augmento_image,caption='Augmento Social Media Scores after filtering', use_column_width=True)
 
     '''
-    ### Index Corrolation
-    Below you will find a heatmap showing **corrolations** between our exogenous variables (the Fear&Greed index and the three social media scores from Augmento) and the value of Bitcoin.
+    ### Index Correlation
+    Below you will find a heatmap showing **correlations** between our exogenous variables (the Fear&Greed index and the three social media scores from Augmento) and the value of Bitcoin.
     '''
     # Heatmap for corrolations
     heatmap_image = Image.open('images/heatmap2.png')
@@ -311,7 +311,7 @@ if pages == 'EDA & Metrics':
         y(t)= g(t) + s(t) + h(t) + εt
         ''')
     '''
-    > * **g(t)**: piecewise linear or logistic growth curve for modeling non-periodic changes in time series
+    > * **g(t)**: piecewise linear or logistic growth curve for modeling non-periodic changes in time series (trend)
     > * **s(t)**: periodic changes (e.g. weekly/yearly seasonality)
     > * **h(t)**: effects of holidays (user provided) with irregular schedules
     > * **εt**: error term accounts for any unusual changes not accommodated by the model
@@ -327,33 +327,26 @@ if pages == 'EDA & Metrics':
     '''
     This shows that buyers should actually be targetting Thursday's as the best day to buy!
 
-    ### Model Prediction Accuracy and Mean Absolute Error (MAE):
+    ### Model Accuracy and Mean Absolute Error (MAE):
     '''
     # Load csv with predictions
-    no_score = pd.read_csv('data/predictions_no_score.csv')
-    one_score = pd.read_csv('data/predictions_fear_greed_score.csv')
-    all_score = pd.read_csv('data/predictions_all_scores_best.csv')
+    # no_score = pd.read_csv('data/predictions_no_score.csv')
+    # one_score = pd.read_csv('data/predictions_fear_greed_score.csv')
+    # all_score = pd.read_csv('data/predictions_all_scores_best.csv')
 
-    def metrics(pred_df):
-        accuracy = pred_df['correct_pred'].sum()/len(pred_df['correct_pred'])
-        MAE = pred_df['mae'].mean()
-        return accuracy, MAE
+    # def metrics(pred_df):
+    #     accuracy = pred_df['correct_pred'].sum()/len(pred_df['correct_pred'])
+    #     MAE = pred_df['mae'].mean()
+    #     return accuracy, MAE
     
-    st.write('No Signal Accuracy:', round(metrics(no_score)[0],3))
-    st.write('No Signal MAE:', round(metrics(no_score)[1],3))
-    st.write('One Signal Accuracy:', round(metrics(one_score)[0],3))
-    st.write('One Signal MAE:', round(metrics(one_score)[1],3))
-    st.write('Four Signal Accuracy:', round(metrics(all_score)[0],3))
-    st.write('Four Signal MAE:', round(metrics(all_score)[1],3))
+    mae_acc_image = Image.open('images/accuracy-mae.png')
+    st.image(mae_acc_image, use_column_width=True)
 
-    '''
-
-    '''
     '''
     # 
     # Future Steps
-    ### - Getting augmento live api
-    ### - Do our own sentiment analysis via web scraping to avoid needing indexes
-    ### - Trying out predictions with other cryptocurrencies 
-    ### - Converting the model into hourly predictions for better accuracy
+    ### 1. Getting augmento live api
+    ### 2. Do our own sentiment analysis via web scraping
+    ### 3. Converting the model into hourly predictions for better accuracy
+    ### 4. Trying out predictions with other cryptocurrencies 
     '''
