@@ -6,7 +6,6 @@ import numpy as np
 from PIL import Image
 import requests
 import base64
-import matplotlib.pyplot as plt
 
 # page conf
 st.set_page_config(
@@ -287,13 +286,6 @@ if pages == 'EDA & Metrics':
     # Social Media Postive/Negative filtering and category count
     augmento_count_image = Image.open('images/augmento-count-categories.png')
     st.image(augmento_count_image,caption='Augmento Categories Count', use_column_width=True)
-    # sm_category_count = {'Total':93, 'Neutral': 59, 'Negative': 20, 'Positive': 14}
-    # keys = sm_category_count.keys()
-    # values = sm_category_count.values()
-    # fig, ax = plt.subplots()
-    # ax.bar(keys, values, color=['darkslateblue', 'teal', 'turquoise', 'skyblue'])
-    # plt.ylabel('Count')
-    # st.pyplot(fig)
 
     '''
     Below is the final **score progression over time** of each social media platform after our **filtering for positive and negative posts**. As you can see each platform shows a different general tendency towards Bitcoin, but **never static**.
@@ -335,7 +327,7 @@ if pages == 'EDA & Metrics':
     '''
     This shows that buyers should actually be targetting Thursday's as the best day to buy!
 
-    ### Accuracy and Mean Absolute Error (MAE):
+    ### Model Prediction Accuracy and Mean Absolute Error (MAE):
     '''
     # Load csv with predictions
     no_score = pd.read_csv('data/predictions_no_score.csv')
