@@ -108,11 +108,11 @@ if pages == 'Main':
     ### We set out to predict the fluctuations of the bitcoin market using machine learning models and then quantify the effects of sentiment indicators.
     At first we tried to develop our own sentiment analysis tool, but we found pre-exisiting cryptocurrency sources giving sentiment analysis of social media:
 
-    1. [Fear & Greed Index](https://alternative.me/crypto/fear-and-greed-index/) : This index takes into account not only social media sentiment (accounts for 15% of overall value) but also other economic indicators like **Volatility** (25%) or **Market Momentum/Volume** (25%). This gives an added economical inight to our predictions.
-    2. [Augmento Sentiment Data](https://www.augmento.ai/) : This source held a count of labelled messages from different sources (twitter, reddit and bitcoin talk) which we then filtered for **positive, negative** and **neutral emotions**. More on our methodology can be found in EDA and Metrics page.
+    1. [Fear & Greed Index](https://alternative.me/crypto/fear-and-greed-index/) : This index takes into account not only social media sentiment (accounts for 15% of overall value) but also other economic indicators like **Volatility** (25%) or **Market Momentum/Volume** (25%). This gives an added economical insight to our predictions.
+    2. [Augmento Sentiment Data](https://www.augmento.ai/) : This source provides labelled messages from different sources (twitter, reddit and bitcoin talk) which we then filtered for **positive, negative** and **neutral emotions**. More on our methodology can be found in EDA and Metrics page.
 
-    By using these indexes we freed ourselves to focus on the time-series predictive model. Ultimately we used Facebook's Prophet model due to its predictive capacity, seasonality fits, and ease of use.
-    Below you will find contrasting results for predictions with and without the use of sentiment indicators...
+    We used Facebook's Prophet model due to its predictive capacity, seasonality fits, and ease of use.
+    Below you will find contrasting results for predictions with and without the use of sentiment indicators.
 
     '''
 
@@ -140,7 +140,7 @@ if pages == 'Main':
         # a2.image('https://res.cloudinary.com/dbxctsqiw/image/upload/v1615466627/SmArt/ed_ljtaqb.png')
         '''
         The results below show 3 example wallet performances *plus* simple market performance. The first wallet (**no signal**) only accounts for previous price fluctuations, which our time-series Prophet model took into account for the prediction.
-        The second wallet (**one signal**) accounts for the Fear&Greed index as an exogenous varible. The third (**four signals**), and best performing wallet, also takes into account Augmento data for which we collected social media sentiment scores from twitter, reddit, and bitcoin talk messages. 
+        The second wallet (**one signal**) accounts for the Fear&Greed index as an exogenous variable. The third (**four signals**), and best performing wallet, also takes into account Augmento data for which we collected social media sentiment scores from twitter, reddit, and bitcoin talk messages. 
         By taking into account Fear&Greed and Augmento data as **exogenous variables** our final wallet becomes **the best performing** one.
         '''
     '''
@@ -361,6 +361,7 @@ if pages == 'EDA & Metrics':
     # 
     # Future Steps
     ### - Getting augmento live api
+    ### - Do our own sentiment analysis via web scraping to avoid needing indexes
     ### - Trying out predictions with other cryptocurrencies 
     ### - Converting the model into hourly predictions for better accuracy
     '''
