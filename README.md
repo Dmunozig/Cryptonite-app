@@ -2,6 +2,9 @@
 - Project: Crypto-Sentiment streamlit app respository
 - Description: This repository holds light-weight package holding all scripts and files required for heroku/streamlit deployment
 
+# Heroku link
+- https://cryptonite-sentiment.herokuapp.com/
+
 # Startup the project
 
 The initial setup.
