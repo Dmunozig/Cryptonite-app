@@ -1,6 +1,7 @@
 # Repository info
-- Project: Crypto-Sentiment streamlit app respository
+- Project: Cryptonite streamlit app respository
 - Description: This repository holds light-weight package holding all scripts and files required for heroku/streamlit deployment
+- Cryptonite predicts daily bitcoin price using sentiment analysis as an additional feature 
 
 # Heroku link
 - https://cryptonite-sentiment.herokuapp.com/
