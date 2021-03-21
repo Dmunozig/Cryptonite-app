@@ -259,7 +259,7 @@ if pages == 'Live Prediction':
     if recommendation == 'Buy':
         st.success('You should buy bitcoin ASAP!')
 
-    # Timer until next update
+    # TO DO Timer until next update 
 
     # Graph showing evolution of F&G progress (we have the df so better to plot it ourselves)
     '''
